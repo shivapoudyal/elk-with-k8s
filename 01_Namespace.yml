@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: efk-logs
+...
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+   name: my-log-ns
+...

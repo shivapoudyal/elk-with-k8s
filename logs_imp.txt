@@ -1,0 +1,65 @@
+
+
+---------------------------------------------------------------------
+                    CLUSTER LEVEL LOGS
+---------------------------------------------------------------------
+
+1)  Our application pods will be into differents nodes, thus we cluster level logs 
+
+2)  We will import/extract the logs from container logs files which into dir : /var/log/containers/*.log
+
+3)  How will it send/extract the logs of different nodes and their pod's containers:
+
+    i)  we will add a sepreate pod for logging agents (fluentD, fluentBit etc) 
+        into each nodes which is a DEMONSET process (one pod / node).
+
+        
+---------------------------------------------------------------------
+                    FLUENTD vs FLUENTBIT (logging agents)
+---------------------------------------------------------------------
+
+Note: FLUENTD vs FLUENTBIT are just loggin agents which is used to send the data logs into any monitoring tools like splunk, elasticsearch, cloudwatch etc.
+
+1)  fluentD has more inbuilt plugins somewhere 100+, but fluentBit doesn't have this much plugins available.
+
+2)  fluentD: 
+
+        i)  However if traffic goes up fluentD can't keep up and its memory intensive and its memory is not dynamic so if traffic goes up fluentD memory doesn't increase dynamic and we need to increase it manually by calling some APIs, due to this issue sometimes we can even loss the logs.
+
+        ii) to solve the this issues of fluentD we can use some data streaming services like "KINESIS data firehose" in backend with fluentD, so that it can hanle the logs and its traffic in backend. 
+
+    fluentBit:
+
+        i)  fluentBit is lighweight logging agent and its keeps up with higher traffic automatically.
+
+        ii) we generally no need to use any data streaming service in this case until we have to extract 
+            the logs into the multiple logging backend (monitoring tools) at same time.
+
+
+---------------------------------------------------------------------
+                    CREATE FLUENTD AND FLUENTBIT using K8S
+---------------------------------------------------------------------
+
+1)  Create FLUENTD:
+        create:
+            kubectl apply -f fluentd.yml (created yml file)
+
+        # this will create the fluentD pods under kube-system namespace
+
+        get fluentD pods:
+            kubectl get pod --namespace=kube-system  
+
+
+---------------------------------------------------------------------
+                    WHAT TO LOG IN KUBERNETES
+---------------------------------------------------------------------              
+
+1)  We can log various things in kubernetes such as:
+
+    i)  Application Logs
+    ii) Kubernetes Cluster Logs:
+        a)  Kube-apiserver
+        b)  Kube-scheduler
+        c)  Etcd
+        d)  Kube-proxy
+        e)  Kubelet
